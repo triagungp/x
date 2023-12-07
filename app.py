@@ -12,7 +12,7 @@ from bson import ObjectId
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-app.config['UPLOAD_FOLDER'] = './static/produk'
+app.config['UPLOAD_PRODUK'] = './static/produk'
 
 SECRET_KEY = 'SPARTA'
 TOKEN_KEY = 'mytoken'
@@ -152,6 +152,120 @@ def sign_in():
             }
         )
 
+
+@app.route('/produk')
+def show_produk():
+    produk_list = db.produk.find()
+
+    return render_template('produk.html', produk_list=produk_list)
+
+@app.route('/edit', methods=['POST'])
+def edit_produk():
+    product_id = request.form.get('produk._id')
+    nama_produk = request.form.get('nama_produk')
+    harga_produk = request.form.get('harga_produk')
+    deskripsi_produk = request.form.get('deskripsi_produk')
+
+    existing_filename = request.form.get('existing_foto_produk', 'default.jpg')
+    filename = existing_filename
+
+
+    if 'foto_produk' in request.files:
+        foto_produk = request.files['foto_produk']
+        if foto_produk.filename != '':
+            filename = f"{nama_produk}_{secure_filename(foto_produk.filename)}"
+            foto_produk.save(os.path.join(app.config['UPLOAD_PRODUK'], filename))
+
+    db.produk.update_one(
+        {'_id': ObjectId(product_id)},
+        {
+            '$set': {
+                'nama_produk': nama_produk,
+                'harga_produk': harga_produk,
+                'deskripsi_produk': deskripsi_produk
+            }
+        }
+    )
+
+    if filename != existing_filename:
+        db.produk.update_one(
+            {'_id': ObjectId(product_id)},
+            {'$set': {'foto_produk': filename}}
+        )
+
+    return redirect(url_for('show_produk'))
+
+@app.route('/add', methods=['POST'])
+def add_product():
+    nama_produk = request.form['nama_produk']
+    harga_produk = request.form['harga_produk']
+    deskripsi_produk = request.form['deskripsi_produk']
+
+    foto_produk = request.files['foto_produk'] if 'foto_produk' in request.files else None
+
+    if foto_produk and foto_produk.filename != '':
+        filename = secure_filename(f"{nama_produk}_{foto_produk.filename}")
+        foto_produk.save(os.path.join(app.config['UPLOAD_PRODUK'], filename))
+    else:
+        filename = 'default.jpg'
+
+    produk_data = {
+        'nama_produk': nama_produk,
+        'foto_produk': filename,
+        'harga_produk': harga_produk,
+        'deskripsi_produk': deskripsi_produk
+    }
+
+    db.produk.insert_one(produk_data)
+
+    return redirect(url_for('show_produk'))
+
+@app.route('/delete', methods=['POST'])
+def delete_product():
+    product_id = request.form['produk._id']
+    db.produk.delete_one({'_id': ObjectId(product_id)})
+
+    return redirect(url_for('show_produk'))
+
+@app.route('/buy', methods=['POST'])
+def buy_product():
+    email_pemesan = request.form['email_pemesan']
+    nama_produk = request.form['nama_produk']
+    jumlah_pesanan = int(request.form['jumlah_pesanan'])
+    alamat = request.form['alamat']
+    status_pemesanan = 'Pending' 
+
+    pesanan_data = {
+        'email_pemesan': email_pemesan,
+        'nama_produk': nama_produk,
+        'jumlah_pesanan': jumlah_pesanan,
+        'alamat': alamat,
+        'status_pemesanan': status_pemesanan
+    }
+
+    db.pesanan.insert_one(pesanan_data)
+
+    return redirect(url_for('some_success_route'))
+
+@app.route('/cart', methods=['POST'])
+def add_to_cart():
+    email_pemesan = request.form['email_pemesan']
+    nama_produk = request.form['nama_produk']
+    jumlah_pesanan = int(request.form['jumlah_pesanan'])
+    alamat = request.form['alamat']
+    status_pemesanan = 'In Cart' 
+
+    pesanan_data = {
+        'email_pemesan': email_pemesan,
+        'nama_produk': nama_produk,
+        'jumlah_pesanan': jumlah_pesanan,
+        'alamat': alamat,
+        'status_pemesanan': status_pemesanan
+    }
+
+    db.pesanan.insert_one(pesanan_data)
+
+    return redirect(url_for('some_cart_route')) 
 
 
 if __name__ == '__main__':
