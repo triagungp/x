@@ -8,9 +8,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
-    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap" rel="stylesheet">    <title>Login</title>
 </head>
 <style>
+    
     body {
         background-image: url("{{ url_for('static', filename='background.jpg') }}");
         background-size: cover;
@@ -18,10 +19,24 @@
         background-repeat: no-repeat;
         height: 100vh;
     }
+
+    .banner {
+        background-image: url("{{ url_for('static', filename='banner.jpg') }}");
+        background-size: cover;
+        background-position: center;
+        height: 100%;
+        margin-top: 0;
+    }
+
+    .banner .container {
+        top: 40%;
+        left: 5%;
+    }
+    
 </style>
 
 <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="https://bulma.io">
                 <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
@@ -66,18 +81,55 @@
                 <div class="navbar-item">
                     <div class="buttons">
                         {% if not logged_in %}
-                            <a href="/signup" class="button is-primary">Sign Up</a>
-                            <a href="/signin" class="button is-light">Login</a>
+                        <a href="/signup" class="button is-primary">Sign Up</a>
+                        <a href="/signin" class="button is-light">Login</a>
                         {% else %}
-                            <a href="/logout" class="button is-danger">Log Out</a>
+                        <a href="/logout" class="button is-danger">Log Out</a>
                         {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </nav>
-
-
+    <section class="banner">
+        <div class="container">
+            <div class="column" style="font-family: 'Kalam', cursive;">
+                <h1 class="title" style="font-size: 50px;">
+                    Welcome to Our Website
+                </h1>
+                <h2 class="subtitle" style="font-size: 30px;">
+                    Get food and pet needs only here!
+                </h2>
+                <a href="/produk" class="button buy-now is-link">Get Now</a>
+            </div>
+            <div class="column">
+            </div>
+        </div>
+    </section>
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+                    <h3 class="title is-3">About Us</h3>
+                    <p></p>
+                </div>
+                <div class="column">
+                    <h3 class="title is-3">Contact Us</h3>
+                    <p>Email: info@example.com<br>Phone: (123) 456-7890</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>
+                <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is
+                licensed
+                <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
+            </p>
+        </div>
+    </footer>
 </body>
 
 </html>

@@ -8,6 +8,9 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofP+MM9RvH+iK5tr5Szkbe5P/SFIIJdA2b" crossorigin="anonymous">
+
     <title>Login</title>
 </head>
 <style>
@@ -26,16 +29,26 @@
         height: 32px;
     }
 
-    .product-image-container {
-        width: 100%;
+    .produk-item .centered {
+        width: 200px;
         height: 200px;
         overflow: hidden;
+        margin: 0 auto;
     }
 
-    .product-image {
+    .produk-item figure {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .produk-item img {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        object-position: center;
     }
 
     .produk-container {
@@ -72,6 +85,22 @@
 
     .hand-pointer {
         cursor: pointer;
+    }
+
+    .qty {
+        width: 40px;
+        height: 25px;
+        text-align: center;
+    }
+
+    input.qtyplus {
+        width: 25px;
+        height: 25px;
+    }
+
+    input.qtyminus {
+        width: 25px;
+        height: 25px;
     }
 </style>
 
@@ -139,7 +168,25 @@
 
     <section class="section mt-4">
         <div class="container">
-            <h1 class="title">List</h1>
+            <h1 class="title"> </h1>
+            <div class="buttons">
+                <button class="button" onclick="filterProducts('All')">All</button>
+                <button class="button" onclick="filterProducts('Foods')">Foods</button>
+                <button class="button" onclick="filterProducts('Health')">Health</button>
+                <button class="button" onclick="filterProducts('Others')">Others</button>
+                <div class="navbar-item">
+                    <div class="field has-addons">
+                        <p class="control">
+                            <input class="input" type="text" placeholder="Search" id="searchInput">
+                        </p>
+                        <p class="control">
+                            <button class="button" onclick="searchProducts()">
+                                Search
+                            </button>
+                        </p>
+                    </div>
+                </div>
+            </div>
             <div class="columns is-multiline">
                 {% if is_admin %}
                 <div class="column is-full is-fixed-top ">
@@ -147,76 +194,73 @@
                         onclick="toggleModal('tambahDataModal')">Tambah Produk</button>
                 </div>
                 {% endif %}
+
                 {% for produk in produk_list %}
-                {% if is_admin %}
-                <div class="column is-one-quarter">
+                <div class="column is-one-quarter product-card" data-category="{{ produk.kategori_produk }}">
                     <div class="box produk-item">
                         <h2 class="subtitle">{{ produk.nama_produk }}</h2>
-                        <div class="product-image-container">
+                        <div class="centered">
                             <figure class="image hand-pointer" onclick="toggleModal('detailDataModal{{ produk._id }}')">
                                 <img class="product-image" src="/static/produk/{{ produk.foto_produk }}"
                                     alt="Foto Produk">
                             </figure>
                         </div>
                         <p>Harga: Rp {{ produk.harga_produk }}</p>
+                        {% if is_admin %}
                         <button type="button" class="button is-primary"
                             onclick="toggleModal('editDataModal{{ produk._id }}')">Edit</button>
                         <button type="button" class="button is-danger"
                             onclick="toggleModal('hapusDataModal{{ produk._id }}')">Hapus</button>
-                    </div>
-                </div>
-                {% else %}
-                <div class="column is-one-quarter">
-                    <div class="box produk-item">
-                        <h2 class="subtitle">{{ produk.nama_produk }}</h2>
-                        <div class="product-image-container">
-                            <figure class="image hand-pointer" onclick="toggleModal('detailDataModal{{ produk._id }}')">
-                                <img class="product-image" src="/static/produk/{{ produk.foto_produk }}"
-                                    alt="Foto Produk">
-                            </figure>
-                        </div>
-                        <p>Harga: Rp {{ produk.harga_produk }}</p>
-                        <!-- <p>{{ produk.deskripsi_produk }}</p> -->
+                        {% elif is_user %}
                         <button type="button" class="button is-success"
                             onclick="toggleModal('beliDataModal{{ produk._id }}')">Beli</button>
                         <button type="button" class="button is-info"
                             onclick="toggleModal('cartDataModal{{ produk._id }}')">Keranjang</button>
-                        <!-- <input type="number" class="input quantity-input" value="1" min="1"> -->
+                        {% else %}
+                        <p> </p>
+                        {% endif %}
                     </div>
                 </div>
-
-                {% endif %}
 
                 <!-- Detail -->
                 <div class="modal" id="detailDataModal{{ produk._id }}">
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
-                            <p class="modal-card-title">Product Details</p>
+                            <p class="modal-card-title">{{ produk.nama_produk }} Details</p>
                             <button class="delete" aria-label="close"
                                 onclick="toggleModal('detailDataModal{{ produk._id }}')"></button>
                         </header>
                         <section class="modal-card-body">
-                            <h2 class="subtitle">{{ produk.nama_produk }}</h2>
-                            <figure class="image">
-                                <img src="/static/produk/{{ produk.foto_produk }}" alt="Foto Produk"
-                                    style="max-width: 50%; max-height: 50%;">
-                            </figure>
-                            <p>Harga: Rp {{ produk.harga_produk }}</p>
-                            <p>Deskripsi: {{ produk.deskripsi_produk }}</p>
+                            <div class="container is-max-desktop">
+                                <div class="columns is-centered">
+                                    <div class="column is-half">
+                                        <div class="field">
+                                            <input type="hidden" name="nama_produk" value="{{ produk.nama_produk }}">
+                                        </div>
+                                        <h2 class="subtitle has-text-centered">{{ produk.nama_produk }}</h2>
+                                        <figure class="image is-centered">
+                                            <img src="/static/produk/{{ produk.foto_produk }}" alt="Foto Produk">
+                                        </figure>
+                                        <p class="has-text-centered">Price: Rp {{ produk.harga_produk }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="has-text-centered">Description: {{ produk.deskripsi_produk }}</p>
                         </section>
                         <footer class="modal-card-foot">
-
                             {% if is_admin %}
                             <button type="button" class="button is-primary"
                                 onclick="toggleModal('editDataModal{{ produk._id }}')">Edit</button>
                             <button type="button" class="button is-danger"
                                 onclick="toggleModal('hapusDataModal{{ produk._id }}')">Hapus</button>
-                            {% else %}
+                            {% elif is_user %}
                             <button type="button" class="button is-success"
                                 onclick="toggleModal('beliDataModal{{ produk._id }}')">Beli</button>
                             <button type="button" class="button is-info"
                                 onclick="toggleModal('cartDataModal{{ produk._id }}')">Keranjang</button>
+                            {% else %}
+                            <p> </p>
                             {% endif %}
 
                         </footer>
@@ -229,7 +273,7 @@
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
-                            <p class="modal-card-title">Edit Product</p>
+                            <p class="modal-card-title">Edit Product {{ produk.nama_produk }}</p>
                             <button class="delete" aria-label="close"
                                 onclick="toggleModal('editDataModal{{ produk._id }}')"></button>
                         </header>
@@ -241,7 +285,7 @@
                                     <label class="label">Product Name</label>
                                     <div class="control">
                                         <input class="input" type="text" name="nama_produk"
-                                            placeholder="Enter product name" value="{{ produk.nama_produk }}">
+                                            placeholder="Enter product name" value="{{ produk.nama_produk }}" required>
                                     </div>
                                 </div>
 
@@ -249,7 +293,8 @@
                                     <label class="label">Product Price</label>
                                     <div class="control">
                                         <input class="input" type="text" name="harga_produk"
-                                            placeholder="Enter product price" value="{{ produk.harga_produk }}">
+                                            placeholder="Enter product price" value="{{ produk.harga_produk }}"
+                                            required>
                                     </div>
                                 </div>
 
@@ -257,7 +302,22 @@
                                     <label class="label">Product Description</label>
                                     <div class="control">
                                         <textarea class="textarea" name="deskripsi_produk"
-                                            placeholder="Enter product description">{{ produk.deskripsi_produk }}</textarea>
+                                            placeholder="Enter product description"
+                                            required>{{ produk.deskripsi_produk }}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label class="label">Product Category</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="kategori_produk">
+                                                <option value="{{ produk.kategori_produk }}">{{ produk.kategori_produk }}</option>
+                                                <option value="Foods">Foods</option>
+                                                <option value="Health">Health</option>
+                                                <option value="Others">Others</option>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -285,12 +345,13 @@
                     </div>
                 </div>
 
+
                 <!-- Delete -->
                 <div class="modal" id="hapusDataModal{{ produk._id }}">
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
-                            <p class="modal-card-title">Hapus Product</p>
+                            <p class="modal-card-title">Hapus {{ produk.nama_produk }}</p>
                             <button class="delete" aria-label="close"
                                 onclick="toggleModal('hapusDataModal{{ produk._id }}')"></button>
                         </header>
@@ -316,52 +377,65 @@
                             <p class="modal-card-title">Add New Product</p>
                             <button class="delete" aria-label="close" onclick="toggleModal('tambahDataModal')"></button>
                         </header>
-                        <form action="/add" method="POST" enctype="multipart/form-data"></form>
-                        <section class="modal-card-body">
+                        <form action="/add" method="POST" enctype="multipart/form-data">
+                            <section class="modal-card-body">
 
-                            <div class="field">
-                                <label class="label">Product Name</label>
-                                <div class="control">
-                                    <input class="input" type="text" name="nama_produk"
-                                        placeholder="Enter product name">
+                                <div class="field">
+                                    <label class="label">Product Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="nama_produk"
+                                            placeholder="Enter product name" required>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="field">
-                                <label class="label">Product Price</label>
-                                <div class="control">
-                                    <input class="input" type="text" name="harga_produk"
-                                        placeholder="Enter product price">
+                                <div class="field">
+                                    <label class="label">Product Price</label>
+                                    <div class="control">
+                                        <input class="input" type="text" name="harga_produk"
+                                            placeholder="Enter product price" required>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="field">
-                                <label class="label">Product Description</label>
-                                <div class="control">
-                                    <textarea class="textarea" name="deskripsi_produk"
-                                        placeholder="Enter product description"></textarea>
+                                <div class="field">
+                                    <label class="label">Product Description</label>
+                                    <div class="control">
+                                        <textarea class="textarea" name="deskripsi_produk"
+                                            placeholder="Enter product description" required></textarea>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="field">
-                                <label class="label">Product Photo</label>
-                                <div class="control">
-                                    <input class="input" type="file" name="foto_produk" accept="image/*">
+                                <div class="field">
+                                    <label class="label">Product Category</label>
+                                    <div class="control">
+                                        <div class="select is-fullwidth">
+                                            <select name="kategori_produk">
+                                                <option value="Foods">Foods</option>
+                                                <option value="Health">Health</option>
+                                                <option value="Others">Others</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                        </section>
-                        <footer class="modal-card-foot">
-                            <div class="field is-grouped">
-                                <div class="control">
-                                    <button type="submit" class="button is-primary">Add Product</button>
+                                <div class="field">
+                                    <label class="label">Product Photo</label>
+                                    <div class="control">
+                                        <input class="input" type="file" name="foto_produk" accept="image/*" required>
+                                    </div>
                                 </div>
-                                <div class="control">
-                                    <button type="button" class="button is-link"
-                                        onclick="toggleModal('tambahDataModal')">Cancel</button>
+
+                            </section>
+                            <footer class="modal-card-foot">
+                                <div class="field is-grouped">
+                                    <div class="control">
+                                        <button type="submit" class="button is-primary">Add Product</button>
+                                    </div>
+                                    <div class="control">
+                                        <button type="button" class="button is-link"
+                                            onclick="toggleModal('tambahDataModal')">Cancel</button>
+                                    </div>
                                 </div>
-                            </div>
-                        </footer>
+                            </footer>
                         </form>
                     </div>
                 </div>
@@ -371,43 +445,54 @@
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
-                            <p class="modal-card-title">Buy Product</p>
-                            <button class="delete" aria-label="close" onclick="toggleModal('beliDataModal{{ produk._id }}')"></button>
+                            <p class="modal-card-title">Buy {{ produk.nama_produk }}</p>
+                            <button class="delete" aria-label="close"
+                                onclick="toggleModal('beliDataModal{{ produk._id }}')"></button>
                         </header>
-                        <form action="/buy" method="POST">
+                        <form id="buyform" action="/buy" method="POST">
                             <section class="modal-card-body">
                                 <div class="field">
-                                    <label class="label">Email</label>
-                                    <div class="control">
-                                        <input class="input" type="email" name="email_pemesan"
-                                            placeholder="Enter your email">
-                                    </div>
+                                    <input type="hidden" name="produk._id" value="{{ produk._id }}">
                                 </div>
 
                                 <div class="field">
-                                    <label class="label">Product Name</label>
-                                    <div class="control">
-                                        <input class="input" type="text" name="nama_produk"
-                                            placeholder="Enter product name">
+                                    <input type="hidden" name="email_pemesan" value="{{ email }}">
+                                </div>
+
+                                <div class="container is-max-desktop">
+                                    <div class="columns is-centered">
+                                        <div class="column is-half">
+                                            <div class="field">
+                                                <input type="hidden" name="nama_produk"
+                                                    value="{{ produk.nama_produk }}">
+                                            </div>
+                                            <h2 class="subtitle has-text-centered">{{ produk.nama_produk }}</h2>
+                                            <figure class="image is-centered">
+                                                <img src="/static/produk/{{ produk.foto_produk }}" alt="Foto Produk">
+                                            </figure>
+                                            <p class="has-text-centered">Harga: Rp {{ produk.harga_produk }}</p>
+                                        </div>
                                     </div>
                                 </div>
+
 
                                 <div class="field">
                                     <label class="label">Quantity</label>
-                                    <div class="control">
-                                        <input class="input" type="number" name="jumlah_pesanan"
-                                            placeholder="Enter quantity">
+                                    <div class="field is-grouped">
+                                        <button type="button" class="button is-danger"
+                                            onclick="decrementQuantity('{{ produk._id }}')">-</button>
+                                        <input class="input" type="text" name="jumlah_pesanan_{{ produk._id }}"
+                                            id="jumlah_pesanan_{{ produk._id }}" pattern="[0-9]+" value="1" readonly>
+
+                                        <button type="button" class="button is-success"
+                                            onclick="incrementQuantity('{{ produk._id }}')">+</button>
                                     </div>
                                 </div>
-
                                 <div class="field">
-                                    <label class="label">Address</label>
-                                    <div class="control">
-                                        <textarea class="textarea" name="alamat"
-                                            placeholder="Enter your address"></textarea>
-                                    </div>
+                                    <input type="hidden" name="alamat" value="{{ address }}">
                                 </div>
                             </section>
+
                             <footer class="modal-card-foot">
                                 <div class="field is-grouped">
                                     <div class="control">
@@ -430,40 +515,48 @@
                     <div class="modal-card">
                         <header class="modal-card-head">
                             <p class="modal-card-title">Add to Cart</p>
-                            <button class="delete" aria-label="close" onclick="toggleModal('cartDataModal{{ produk._id }}')"></button>
+                            <button class="delete" aria-label="close"
+                                onclick="toggleModal('cartDataModal{{ produk._id }}')"></button>
                         </header>
                         <form action="/cart" method="POST">
                             <section class="modal-card-body">
                                 <div class="field">
-                                    <label class="label">Email</label>
-                                    <div class="control">
-                                        <input class="input" type="email" name="email_pemesan"
-                                            placeholder="Enter your email">
-                                    </div>
+                                    <input type="hidden" name="produk._id" value="{{ produk._id }}">
                                 </div>
 
                                 <div class="field">
-                                    <label class="label">Product Name</label>
-                                    <div class="control">
-                                        <input class="input" type="text" name="nama_produk"
-                                            placeholder="Enter product name">
-                                    </div>
+                                    <input type="hidden" name="email_pemesan" value="{{ email }}">
                                 </div>
 
+                                <div class="container is-max-desktop">
+                                    <div class="columns is-centered">
+                                        <div class="column is-half">
+                                            <div class="field">
+                                                <input type="hidden" name="nama_produk"
+                                                    value="{{ produk.nama_produk }}">
+                                            </div>
+                                            <h2 class="subtitle has-text-centered">{{ produk.nama_produk }}</h2>
+                                            <figure class="image is-centered">
+                                                <img src="/static/produk/{{ produk.foto_produk }}" alt="Foto Produk">
+                                            </figure>
+                                            <p class="has-text-centered">Harga: Rp {{ produk.harga_produk }}</p>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="field">
                                     <label class="label">Quantity</label>
-                                    <div class="control">
-                                        <input class="input" type="number" name="jumlah_pesanan"
-                                            placeholder="Enter quantity">
+                                    <div class="field is-grouped">
+                                        <button type="button" class="button is-danger"
+                                            onclick="decrementCart('{{ produk._id }}')">-</button>
+                                        <input class="input" type="text" name="insert_cart_{{ produk._id }}"
+                                            id="insert_cart_{{ produk._id }}" pattern="[0-9]+" value="1" readonly>
+
+                                        <button type="button" class="button is-success"
+                                            onclick="incrementCart('{{ produk._id }}')">+</button>
                                     </div>
                                 </div>
-
                                 <div class="field">
-                                    <label class="label">Address</label>
-                                    <div class="control">
-                                        <textarea class="textarea" name="alamat"
-                                            placeholder="Enter your address"></textarea>
-                                    </div>
+                                    <input type="hidden" name="alamat" value="{{ address }}">
                                 </div>
                             </section>
                             <footer class="modal-card-foot">
@@ -480,7 +573,6 @@
                         </form>
                     </div>
                 </div>
-
 
                 {% endfor %}
             </div>
@@ -499,11 +591,67 @@
         </div>
     </footer>
 
-    <script defer src="https://cdn.jsdelivr.net/npm/bulma@0.9.3/js/bulma.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         function toggleModal(modalId) {
             var modal = document.getElementById(modalId);
             modal.classList.toggle('is-active');
+        }
+        function incrementQuantity(productId) {
+            var quantityInput = document.getElementById('jumlah_pesanan_' + productId);
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+        function decrementQuantity(productId) {
+            var quantityInput = document.getElementById('jumlah_pesanan_' + productId);
+            var newValue = parseInt(quantityInput.value) - 1;
+            if (newValue >= 1) {
+                quantityInput.value = newValue;
+            }
+        }
+
+        function incrementCart(productId) {
+            var quantityInput = document.getElementById('insert_cart_' + productId);
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+
+        function decrementCart(productId) {
+            var quantityInput = document.getElementById('insert_cart_' + productId);
+            var newValue = parseInt(quantityInput.value) - 1;
+            if (newValue >= 1) {
+                quantityInput.value = newValue;
+            }
+        }
+
+        function filterProducts(category) {
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.style.display = 'none';
+            });
+
+            if (category === 'All') {
+                document.querySelectorAll('.product-card').forEach(card => {
+                    card.style.display = 'block';
+                });
+            } else {
+                document.querySelectorAll(`.product-card[data-category="${category}"]`).forEach(card => {
+                    card.style.display = 'block';
+                });
+            }
+        }
+
+        function searchProducts() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+            document.querySelectorAll('.product-card').forEach(card => {
+                card.style.display = 'none';
+            });
+
+            document.querySelectorAll('.product-card').forEach(card => {
+                const productName = card.querySelector('.subtitle').innerText.toLowerCase();
+                if (productName.includes(searchInput)) {
+                    card.style.display = 'block';
+                }
+            });
         }
     </script>
 

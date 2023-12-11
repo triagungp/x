@@ -54,6 +54,9 @@ def inject_logged_in():
     token_receive = request.cookies.get(TOKEN_KEY)
     logged_in = False
     is_admin = None
+    is_user = None
+    email = None
+    address = None
 
     if token_receive:
         try:
@@ -66,12 +69,15 @@ def inject_logged_in():
             if user_info:
                 logged_in = True
                 is_admin = user_info.get("role") == "admin"
+                is_user = user_info.get("role") == "customers"
+                email = user_info.get("email")
+                address = user_info.get("address")
         except jwt.ExpiredSignatureError:
             pass
         except jwt.exceptions.DecodeError:
             pass
 
-    return {'logged_in': logged_in, 'is_admin': is_admin}
+    return {'logged_in': logged_in, 'is_admin': is_admin, 'is_user': is_user, 'email': email, 'address': address}
 
 @app.route('/signup')
 def signup():
@@ -165,6 +171,8 @@ def edit_produk():
     nama_produk = request.form.get('nama_produk')
     harga_produk = request.form.get('harga_produk')
     deskripsi_produk = request.form.get('deskripsi_produk')
+    kategori_produk = request.form['kategori_produk']
+
 
     existing_filename = request.form.get('existing_foto_produk', 'default.jpg')
     filename = existing_filename
@@ -173,7 +181,9 @@ def edit_produk():
     if 'foto_produk' in request.files:
         foto_produk = request.files['foto_produk']
         if foto_produk.filename != '':
-            filename = f"{nama_produk}_{secure_filename(foto_produk.filename)}"
+            file_extension = foto_produk.filename.rsplit('.', 1)[1].lower() if '.' in foto_produk.filename else 'jpg'
+
+            filename = secure_filename(f"{nama_produk}.{file_extension}")
             foto_produk.save(os.path.join(app.config['UPLOAD_PRODUK'], filename))
 
     db.produk.update_one(
@@ -182,7 +192,9 @@ def edit_produk():
             '$set': {
                 'nama_produk': nama_produk,
                 'harga_produk': harga_produk,
-                'deskripsi_produk': deskripsi_produk
+                'deskripsi_produk': deskripsi_produk,
+                'kategori_produk': kategori_produk
+
             }
         }
     )
@@ -200,11 +212,15 @@ def add_product():
     nama_produk = request.form['nama_produk']
     harga_produk = request.form['harga_produk']
     deskripsi_produk = request.form['deskripsi_produk']
+    kategori_produk = request.form['kategori_produk']
+
 
     foto_produk = request.files['foto_produk'] if 'foto_produk' in request.files else None
 
     if foto_produk and foto_produk.filename != '':
-        filename = secure_filename(f"{nama_produk}_{foto_produk.filename}")
+        file_extension = foto_produk.filename.rsplit('.', 1)[1].lower() if '.' in foto_produk.filename else 'jpg'
+
+        filename = secure_filename(f"{nama_produk}.{file_extension}")
         foto_produk.save(os.path.join(app.config['UPLOAD_PRODUK'], filename))
     else:
         filename = 'default.jpg'
@@ -213,7 +229,8 @@ def add_product():
         'nama_produk': nama_produk,
         'foto_produk': filename,
         'harga_produk': harga_produk,
-        'deskripsi_produk': deskripsi_produk
+        'deskripsi_produk': deskripsi_produk,
+        'kategori_produk': kategori_produk
     }
 
     db.produk.insert_one(produk_data)
@@ -229,12 +246,16 @@ def delete_product():
 
 @app.route('/buy', methods=['POST'])
 def buy_product():
+    product_id = request.form['produk._id']
+
     email_pemesan = request.form['email_pemesan']
     nama_produk = request.form['nama_produk']
-    jumlah_pesanan = int(request.form['jumlah_pesanan'])
     alamat = request.form['alamat']
     status_pemesanan = 'Pending' 
 
+    quantity_key = f'jumlah_pesanan_{product_id}'
+    jumlah_pesanan = int(request.form.get(quantity_key))
+
     pesanan_data = {
         'email_pemesan': email_pemesan,
         'nama_produk': nama_produk,
@@ -245,15 +266,19 @@ def buy_product():
 
     db.pesanan.insert_one(pesanan_data)
 
-    return redirect(url_for('some_success_route'))
+    return redirect(url_for('show_produk'))
 
 @app.route('/cart', methods=['POST'])
 def add_to_cart():
+    product_id = request.form['produk._id']
+
     email_pemesan = request.form['email_pemesan']
     nama_produk = request.form['nama_produk']
-    jumlah_pesanan = int(request.form['jumlah_pesanan'])
     alamat = request.form['alamat']
     status_pemesanan = 'In Cart' 
+
+    quantity_key = f'insert_cart_{product_id}'
+    jumlah_pesanan = int(request.form.get(quantity_key))
 
     pesanan_data = {
         'email_pemesan': email_pemesan,
@@ -265,7 +290,7 @@ def add_to_cart():
 
     db.pesanan.insert_one(pesanan_data)
 
-    return redirect(url_for('some_cart_route')) 
+    return redirect(url_for('show_produk'))
 
 
 if __name__ == '__main__':
