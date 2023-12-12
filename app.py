@@ -142,7 +142,7 @@ def sign_in():
         token = jwt.encode(payload, SECRET_KEY, algorithm="HS256")
 
         response = make_response(redirect(url_for('main')))
-        response.set_cookie(TOKEN_KEY, token.decode('utf-8'))
+        response.set_cookie(TOKEN_KEY, token)
         return response
     else:
         return jsonify(
