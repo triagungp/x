@@ -287,5 +287,77 @@ def add_to_cart():
     return redirect(url_for('show_produk'))
 
 
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    token_receive = request.cookies.get(TOKEN_KEY)
+    try:
+        payload = jwt.decode(
+            token_receive,
+            SECRET_KEY,
+            algorithms=['HS256']
+        )
+        user_info = db.users.find_one({"email": payload["id"]})
+    except jwt.ExpiredSignatureError:
+        user_info = None
+
+    edit_mode = bool(request.args.get('edit_mode', False))
+
+    if request.method == 'POST':
+        if edit_mode:
+            new_name = request.form.get('name')
+            new_address = request.form.get('address')
+
+            db.users.update_one(
+                {'email': user_info['email']},
+                {'$set': {'name': new_name, 'address': new_address}}
+            )
+
+            user_info = db.users.find_one({"email": payload["id"]})
+
+        return redirect(url_for('profile', edit_mode=int(edit_mode)))
+
+    return render_template('profile.html', user_info=user_info, edit_mode=edit_mode)
+
+
+@app.route('/edit_profile', methods=['POST'])
+def edit_profile():
+    if request.method == 'POST':
+        token_receive = request.cookies.get(TOKEN_KEY)
+
+        try:
+            payload = jwt.decode(
+                token_receive,
+                SECRET_KEY,
+                algorithms=['HS256']
+            )
+            user_info = db.users.find_one({"email": payload["id"]})
+        except jwt.ExpiredSignatureError:
+            user_info = None
+
+        if user_info:
+            new_name = request.form.get('name')
+            new_address = request.form.get('address')
+            new_email = request.form.get('email')
+
+            if 'profile_picture' in request.files:
+                profile_picture = request.files['profile_picture']
+                if profile_picture.filename != '':
+                    filename = secure_filename(profile_picture.filename)
+                    profile_picture.save(os.path.join(app.config['UPLOAD_PROFILE'], filename))
+
+                    db.users.update_one(
+                        {'email': user_info['email']},
+                        {'$set': {'profile_picture': filename}}
+                    )
+
+            db.users.update_one(
+                {'email': user_info['email']},
+                {'$set': {'name': new_name, 'address': new_address, 'email': new_email}}
+            )
+\
+            return redirect(url_for('profile'))
+        return render_template('profile.html', user_info=None)
+
+
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
