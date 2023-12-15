@@ -265,7 +265,8 @@ def buy_product():
 @app.route('/cart', methods=['POST'])
 def add_to_cart():
     product_id = request.form['produk._id']
-
+    harga_produk = int(request.form['harga_produk']) 
+    foto_produk = request.form['foto_produk']
     email_pemesan = request.form['email_pemesan']
     nama_produk = request.form['nama_produk']
     alamat = request.form['alamat']
@@ -274,11 +275,16 @@ def add_to_cart():
     quantity_key = f'insert_cart_{product_id}'
     jumlah_pesanan = int(request.form.get(quantity_key))
 
+    total_harga = harga_produk * jumlah_pesanan
+
     pesanan_data = {
         'email_pemesan': email_pemesan,
         'nama_produk': nama_produk,
         'jumlah_pesanan': jumlah_pesanan,
         'alamat': alamat,
+        'foto_produk': foto_produk,
+        'harga_produk': harga_produk,
+        'total_harga': total_harga,
         'status_pemesanan': status_pemesanan
     }
 
@@ -286,6 +292,20 @@ def add_to_cart():
 
     return redirect(url_for('show_produk'))
 
+@app.route('/keranjang')
+def keranjang():
+    cart_items_cursor = db.pesanan.find({'status_pemesanan': 'In Cart'})
+    cart_items = list(cart_items_cursor)
+
+    return render_template('keranjang.html', cart_items=cart_items)
+
+@app.route('/delete_cart_item', methods=['POST'])
+def delete_cart_item():
+    cart_item_id = request.form['cart_item_id']
+    
+    db.pesanan.delete_one({'_id': ObjectId(cart_item_id)})
+    print(f"Deleted cart item with ID: {cart_item_id}")
+    return redirect(url_for('keranjang'))
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
