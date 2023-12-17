@@ -1,45 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-    <title>Riwayat Pemesanan</title>
+    {% if is_admin %}
+    <title>Daftar Pesanan</title>
+    {% else %}
+    <title>Riwayat Pesanan</title>
+    {% endif %}
 </head>
 <style>
-    .body{
-        padding: 20px; 
-        background-image:url("https://eaglesonveterinaryclinic.ca/wp-content/uploads/2023/04/job562-nunoon-10-scaled.jpg");
+    body {
+        background-image: url("{{ url_for('static', filename='background.jpg') }}");
         background-size: cover;
         background-position: center;
         background-repeat: repeat-y;
         background-attachment: fixed;
         margin: 0;
-        min-height: 300px; 
     }
-    .riwayat-pemesanan{
+
+    .riwayat-pemesanan {
         margin: auto;
         width: 50%;
         text-align: center;
     }
-    .container{
+
+    .container {
         background-color: rgba(255, 255, 255, 0.9);
         border-radius: 30px;
         margin-bottom: 12px;
+        margin-bottom: 12px;
     }
 
-    .image{
+    .image {
         margin-left: 60px;
     }
 
-    .title{
+    .title {
         text-align: center;
     }
-    
 </style>
 <script src="https://kit.fontawesome.com/e07047be0e.js" crossorigin="anonymous"></script>
+
 <body>
-    <div class="riwayat-pesanan">
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/homepage">
@@ -52,72 +57,188 @@
                 <span aria-hidden="true"></span>
             </a>
         </div>
-        <div id="navbarBasicExample" class="navbar-menu">
+        <div id="navbar" class="navbar-menu">
             <div class="navbar-start">
+                <a class="navbar-item" href="/">
                 <a class="navbar-item" href="/">
                     Home
                 </a>
                 <a class="navbar-item" href="/produk">
                     Produk
                 </a>
-                <a class="navbar-item" href="keranjang">
-                    Keranjang
-                </a>
+            </div>
+        </div>
+        <div id="navbar" class="navbar-menu">
+            <div class="navbar-end">
+                {% if not logged_in %}
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a href="/signup" class="button is-primary">Sign Up</a>
+                        <a href="/signin" class="button is-light">Login</a>
+                    </div>
                 </div>
+                {% else %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="icon">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a href="/profile" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="/riwayat-pesanan" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-history"></i>
+                            </span>
+                            <span>History</span>
+                        </a>
+                        <a href="/keranjang" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </span>
+                            <span>Cart</span>
+                        </a>
+                        <hr class="navbar-divider">
+                        <a href="/logout" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </nav>
         </div>
-   
+    </nav>
     <!-- Judul Page -->
     <section class="body">
+        {% if is_user %}
         <div class="title">
             <h1>Riwayat Pemesanan</h1>
         </div>
-    <!-- Riwayat Pemesanan -->
-    {% for pesanan in riwayat_pesanan %}
-        <div class="container" >
+        <!-- Riwayat Pemesanan -->
+        {% for pesanan in riwayat_pesanan | sort(attribute='status_pemesanan', reverse=True) %}
+        <div class="container">
             <div class="columns">
-            <div id="image" class="column is-one-quarter">
-                <div class="image-toko">
-                <figure class="image is-128x128">
-                    <img class="is-rounded" src="/static/produk/{{ pesanan.foto_produk }}">
-                  </figure>
+                <div id="image" class="column is-one-quarter">
+                    <div class="image-toko">
+                        <figure class="image is-128x128">
+                            <img class="is-rounded" src="/static/produk/{{ pesanan.foto_produk }}">
+                        </figure>
+                    </div>
                 </div>
-              </div>
-              <div class="column">
-                <p>Nama Produk : <span>{{ pesanan.nama_produk }}</span></p>
-                <p>Total Harga : <span>Rp.{{ pesanan.total_harga }},-</span></p>
-                <p>Status Pengiriman:</p>   
-        {% if (pesanan.status_pemesanan == 'Pending') %}
-              <div>
-                  <button onclick="pending()" class="button is-danger">{{ pesanan.status_pemesanan }}</button>
-              </div>
-        {% elif (pesanan.status_pemesanan == 'In Cart') %} 
-        <div>
-            <button onclick="incart()" class="button is-warning">{{ pesanan.status_pemesanan }}</button>
+                <div class="column">
+                    <h2>{{ pesanan.nama_produk }}</h2>
+                    <p>Quantity: {{ pesanan.jumlah_pesanan }}</p>
+                    <p>Price: {{ pesanan.total_harga }}</p>
+                    <p>Email: {{ pesanan.email_pemesan }}</p>
+                    <p>Address: {{ pesanan.alamat }}</p>
+                    {% if (pesanan.status_pemesanan == 'Pending') %}
+                    <p>Status Pengiriman: Menunggu Konfirmasi Penjual</p>
+                    {% elif (pesanan.status_pemesanan == 'Sedang Dikirim') %}
+                    <p>Status Pengiriman: Pesanan Sedang Dikirim ke Alamatmu</p>
+                    {% elif (pesanan.status_pemesanan == 'Done') %}
+                    <p>Status Pengiriman: Pesanan Telah Sampai di Lokasi</p>
+                    {% elif (pesanan.status_pemesanan == 'Canceled') %}
+                    <p>Status Pengiriman: Pesanan Telah Dibatalkan</p>
+                    {% endif %}
+                </div>
+                <div class="column">
+                    <div class="column is-narrow">
+                        {% if pesanan.status_pemesanan == 'Pending' %}
+                        <form id="cancelForm" action="/cancel_pesanan" method="post">
+                            <input type="hidden" name="cancel_item_id" value="{{ pesanan['_id'] }}">
+                            <button type="button" class="button is-danger" onclick="confirmCancel()">Cancel</button>
+                        </form>
+                        {% elif pesanan.status_pemesanan == 'Sedang Dikirim' %}
+                        <form id="acceptForm" action="/terima_pesanan" method="post">
+                            <input type="hidden" name="history_item_id" value="{{ pesanan['_id'] }}">
+                            <button type="button" class="button is-info" onclick="confirmAccept()">Accept</button>
+                        </form>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
         </div>
-        {%endif%}
-              
-              </div>
+        {% endfor %}
+
+        {% endif %}
+
+        {% if is_admin %}
+        <div class="title">
+            <h1>Daftar Pesanan</h1>
         </div>
-    </div>
-    {% endfor %}
-</section>
-<footer class="footer">
-    <div class="content has-text-centered">
-        <p>
-            <strong>PetShop</strong> Get food and pet-needs only <a href="/produk">here!</a> By Kelompok X. The website content
-            is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
-        </p>
-    </div>
-</footer>
+        <!-- Riwayat Pemesanan -->
+        {% for pesanan in cek_pesanan | sort(attribute='status_pemesanan', reverse=True) %}
+        <div class="container">
+            <div class="columns">
+                <div id="image" class="column is-one-quarter">
+                    <div class="image-toko">
+                        <figure class="image is-128x128">
+                            <img class="is-rounded" src="/static/produk/{{ pesanan.foto_produk }}">
+                        </figure>
+                    </div>
+                </div>
+                <div class="column">
+                    <h2>{{ pesanan.nama_produk }}</h2>
+                    <p>Quantity: {{ pesanan.jumlah_pesanan }}</p>
+                    <p>Price: {{ pesanan.total_harga }}</p>
+                    <p>Email: {{ pesanan.email_pemesan }}</p>
+                    <p>Address: {{ pesanan.alamat }}</p>
+                    {% if (pesanan.status_pemesanan == 'Pending') %}
+                    <p>Status Pengiriman: Menunggu Konfirmasi</p>
+                    {% elif (pesanan.status_pemesanan == 'Sedang Dikirim') %}
+                    <p>Status Pengiriman: Pesanan Sedang Diantar Kurir</p>
+                    {% elif (pesanan.status_pemesanan == 'Done') %}
+                    <p>Status Pengiriman: Pesanan Telah Sampai di Lokasi</p>
+                    {% elif (pesanan.status_pemesanan == 'Canceled') %}
+                    <p>Status Pengiriman: Pesanan Telah Dibatalkan</p>
+                    {% endif %}
+                </div>
+                <div class="column">
+                    <div class="column is-narrow">
+                        {% if pesanan.status_pemesanan == 'Pending' %}
+                        <form id="cancelForm" action="/cancel_pesanan" method="post">
+                            <input type="hidden" name="cancel_item_id" value="{{ pesanan['_id'] }}">
+                            <button type="button" class="button is-danger" onclick="confirmCancel()">Cancel</button>
+                        </form>
+                        {% elif pesanan.status_pemesanan == 'Sedang Dikirim' %}
+                        <form id="acceptForm" action="/terima_pesanan" method="post">
+                            <input type="hidden" name="history_item_id" value="{{ pesanan['_id'] }}">
+                            <button type="button" class="button is-info" onclick="confirmAccept()">Accept</button>
+                        </form>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% endif %}
+    </section>
 </body>
 <script>
-    function pending(){
-        alert("Pesananmu sedang diproses dan akan segera dikirim!")
+    function confirmCancel() {
+        if (confirm('Are you sure you want to cancel this order?')) {
+            document.getElementById('cancelForm').submit();
+        }
     }
-    function incart(){
-        alert("Pesananmu masih ada di keranjang!")
+
+    function confirmAccept() {
+        if (confirm('Are you sure you want to accept this order?')) {
+            document.getElementById('acceptForm').submit();
+        }
     }
 </script>
+
 </html>
