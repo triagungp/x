@@ -478,8 +478,11 @@
                                             </div>
                                             <h2 class="subtitle has-text-centered">{{ produk.nama_produk }}</h2>
                                             <figure class="image is-centered">
+                                                <input type="hidden" name="foto_produk"
+                                                    value="{{ produk.foto_produk }}">
                                                 <img src="/static/produk/{{ produk.foto_produk }}" alt="Foto Produk">
                                             </figure>
+                                            <input type="hidden" name="harga_produk" value="{{ produk.harga_produk }}">
                                             <p class="has-text-centered">Harga: Rp {{ produk.harga_produk }}</p>
                                         </div>
                                     </div>
@@ -601,9 +604,7 @@
     <footer class="footer">
         <div class="content has-text-centered">
             <p>
-                <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is
-                licensed
-                <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                <strong>PetShop</strong> Get food and pet-needs only <a href="/produk">here!</a> By Kelompok X. The website content
                 is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
             </p>
         </div>

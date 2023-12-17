@@ -24,11 +24,16 @@
         background-size: cover;
         background-position: center;
         height: 100%;
-        margin-top: 0;
+        /* margin-top: 0;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0; */
+        animation: moveBackground 20s linear infinite;
     }
 
     .banner .container {
-        top: 40%;
+        top: 34%;
         left: 5%;
     }
 </style>
@@ -37,7 +42,7 @@
     <nav class="navbar is-centered is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="https://bulma.io">
-                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="28">
             </a>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
@@ -108,11 +113,12 @@
     <section class="banner">
         <div class="container">
             <div class="column" style="font-family: 'Kalam', cursive;">
-                <h1 class="title" style="font-size: 50px;">
+                <h1 class="title" style="font-size: 50px; color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); margin-bottom: 0px;">
                     Welcome to Our Website
                 </h1>
-                <h2 class="subtitle" style="font-size: 30px;">
-                    Get food and pet needs only here!
+                <img src="{{ url_for('static', filename='logo-website.png') }}">
+                <h2 class="subtitle" style="font-size: 30px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8) ">
+                    Get food and pet-needs only here!
                 </h2>
                 {% if logged_in %}
                 <a href="/produk" class="button buy-now is-link">Get Now</a>
@@ -127,9 +133,7 @@
     <footer class="footer">
         <div class="content has-text-centered">
             <p>
-                <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is
-                licensed
-                <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                <strong>PetShop</strong> Get food and pet-needs only <a href="/produk">here!</a> By Kelompok X. The website content
                 is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
             </p>
         </div>
