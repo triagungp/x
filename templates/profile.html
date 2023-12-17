@@ -58,52 +58,62 @@
                 <span aria-hidden="true"></span>
             </a>
         </div>
-        <div id="navbarBasicExample" class="navbar-menu">
+        <div id="navbar" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item">
+                <a class="navbar-item" href="/">
                     Home
                 </a>
                 <a class="navbar-item" href="/produk">
                     Produk
                 </a>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        More
-                    </a>
-                    <div class="navbar-dropdown">
-                        <a class="navbar-item">
-                            About
-                        </a>
-                        <a class="navbar-item">
-                            Jobs
-                        </a>
-                        <a class="navbar-item">
-                            Contact
-                        </a>
-                        <hr class="navbar-divider">
-                        <a class="navbar-item">
-                            Report an issue
-                        </a>
-                    </div>
-                </div>
             </div>
+        </div>
+        <div id="navbar" class="navbar-menu">
             <div class="navbar-end">
+                {% if not logged_in %}
                 <div class="navbar-item">
                     <div class="buttons">
-                        {% if not logged_in %}
                         <a href="/signup" class="button is-primary">Sign Up</a>
                         <a href="/signin" class="button is-light">Login</a>
-                        {% else %}
-                        <a href="/keranjang">
-                            <i class="fa-solid fa-cart-shopping mx-4" style="color: black;"></i>
-                        </a>
-                        <a href="/profile" class="profile-image">
-                            <img class="is-rounded" src="{{ url_for('static', filename='default_profile.jpg') }}"
-                                alt="Profile Image">
-                        </a>
-                        {% endif %}
                     </div>
                 </div>
+                {% else %}
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        <span class="icon">
+                            <i class="fa-solid fa-user"></i>
+                        </span>
+                        <span>Profile</span>
+                    </a>
+                    <div class="navbar-dropdown">
+                        <a href="/profile" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="/riwayat-pesanan" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-history"></i>
+                            </span>
+                            <span>History</span>
+                        </a>
+                        <a href="/keranjang" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-shopping-cart"></i>
+                            </span>
+                            <span>Cart</span>
+                        </a>
+                        <hr class="navbar-divider">
+                        <a href="/logout" class="navbar-item">
+                            <span class="icon">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </span>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -112,24 +122,18 @@
     <div class="container is-max-desktop mt-6">
         <div class="notification is-white">
             <div class="columns is-mobile">
-                <div
-                    class="column is-half is-offset-one-quarter is-flex  is-justify-content-center is-align-items-center">
-                    <figure class="media-left" style="align-self: center;">
-                        <div class="" style="width: 96px; height: 96px;">
-                            <a href="#">
-                                <img class="is-rounded ml-4"
-                                    src="{{ url_for('static', filename='profile_placeholder.png') }}" />
-                            </a>
-                        </div>
+                <div class="column is-half is-offset-one-quarter is-flex  is-justify-content-center is-align-items-center">
+                    <figure class="image is-128x128">
+                        <img class="is-rounded" src="/static/profile/{{ foto }}">
                     </figure>
                 </div>
             </div>
 
-            {% if user_info %}
+            {% if logged_in %}
             <div class="media-content is-flex is-justify-content-center">
                 <div class="content ">
                     <p>
-                        <small>@{{ user_info['name'] }}</small>
+                        <small>{{ nama }}</small>
                         <br>
                     </p>
                 </div>
@@ -137,25 +141,33 @@
             {% endif %}
 
             <form method="post" action="{{ url_for('edit_profile') }}" enctype="multipart/form-data">
-                {% if user_info %}
+            {% if logged_in %}
+                <input type="hidden" name="user_id" value="{{ user_id }}">
                 <div class="field mt-5">
                     <label class="label">Name</label>
                     <input class="input" type="text" placeholder="e.g Alex Smith" name="name"
-                        value="{{ user_info.name }}" {% if not edit_mode %}disabled{% endif %} required>
+                        value="{{ name }}" {% if not edit_mode %}disabled{% endif %} required>
                 </div>
                 <div class="field">
                     <label class="label">Alamat</label>
                     <input class="input" type="text" placeholder="e.g Jl." name="address"
-                        value="{{ user_info.address }}" {% if not edit_mode %}disabled{% endif %} required>
+                        value="{{ address }}" {% if not edit_mode %}disabled{% endif %} required>
                 </div>
                 <div class="field">
                     <label class="label">Email</label>
                     <input class="input" type="email" placeholder="e.g example@example.com" name="email"
-                        value="{{ user_info.email }}" {% if not edit_mode %}disabled{% endif %} required>
+                        value="{{ email }}" {% if not edit_mode %}disabled{% endif %} required>
                 </div>
                 {% if edit_mode %}
                 <div class="field">
-                    <button class="button is-danger" type="submit">Save Profile</button>
+                    <label class="label">Profile</label>
+                    <input class="input" type="file" name="profile_picture" accept="image/*" {% if not edit_mode %}disabled{% endif %} required>
+                </div>
+                {% endif %}
+
+                {% if edit_mode %}
+                <div class="field">
+                    <button class="button is-info" type="submit">Save Profile</button>
                     <a href="{{ url_for('profile') }}" class="button is-secondary">Cancel</a>
                 </div>
                 {% else %}
