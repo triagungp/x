@@ -25,13 +25,28 @@
         background-size: cover;
         background-position: center;
         height: 100%;
-        margin-top: 0;
+        /* margin-top: 0;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0; */
+        animation: moveBackground 20s linear infinite;
     }
 
     .banner .container {
-        top: 40%;
+        top: 34%;
         left: 5%;
     }
+
+    @keyframes moveBackground {
+    from {
+        background-position: 0% 0%;
+    }
+    to {
+        background-position: 100% 100%;
+    }
+    }
+
     
 </style>
 
@@ -39,7 +54,7 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="https://bulma.io">
-                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="28">
             </a>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
@@ -61,18 +76,15 @@
                         More
                     </a>
                     <div class="navbar-dropdown">
-                        <a class="navbar-item">
+                        <a class="navbar-item" href="#about-us">
                             About
                         </a>
-                        <a class="navbar-item">
-                            Jobs
-                        </a>
-                        <a class="navbar-item">
+                        <a class="navbar-item" href="#contact">
                             Contact
                         </a>
                         <hr class="navbar-divider">
-                        <a class="navbar-item">
-                            Report an issue
+                        <a class="navbar-item" href="#helpdesk">
+                            Helpdesk
                         </a>
                     </div>
                 </div>
@@ -94,13 +106,14 @@
     <section class="banner">
         <div class="container">
             <div class="column" style="font-family: 'Kalam', cursive;">
-                <h1 class="title" style="font-size: 50px;">
+                <h1 class="title" style="font-size: 50px; color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); margin-bottom: 0px;">
                     Welcome to Our Website
                 </h1>
-                <h2 class="subtitle" style="font-size: 30px;">
-                    Get food and pet needs only here!
+                <img src="{{ url_for('static', filename='logo-website.png') }}">
+                <h2 class="subtitle" style="font-size: 30px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8) ">
+                    Get food and pet-needs only here!
                 </h2>
-                <a href="/produk" class="button buy-now is-link">Get Now</a>
+                <a href="/produk" class="button buy-now is-primary">Get Now</a>
             </div>
             <div class="column">
             </div>
@@ -110,22 +123,29 @@
         <div class="container">
             <div class="columns">
                 <div class="column">
-                    <h3 class="title is-3">About Us</h3>
-                    <p></p>
+                    <h3 class="title is-3" id="about-us">About Us</h3>
+                    <div class="about-us" style="width: 80%;">
+                    <p>Selamat datang di PetShop kami, tempat di mana cinta hewan peliharaan dan perawatan berkumpul!</p>
+                    <p>Dengan berbagai macam pilihan makanan berkualitas, mainan interaktif, dan aksesori bergaya, kami berkomitmen untuk menjadi mitra terbaik Anda dalam merawat dan menyayangi hewan kesayangan.</p>
+                    </div>
                 </div>
                 <div class="column">
-                    <h3 class="title is-3">Contact Us</h3>
-                    <p>Email: info@example.com<br>Phone: (123) 456-7890</p>
+                    <h3 class="title is-3" id="contact">Contact Us</h3>
+                    <p>Email: petshop@yahoo.com<br>Phone: (123) 456-7890</p>
                 </div>
+                <div class="column">
+                    <h3 class="title is-3" id="helpdesk">Helpdesk</h3>
+                    <p>Our Call Center : 022-820-000-111
+                    <img src="https://i.pinimg.com/originals/78/dd/78/78dd786209f3e04b6740065b9ab1569f.png" width="250px" height="60px" >
+                </div>
+                
             </div>
         </div>
     </section>
     <footer class="footer">
         <div class="content has-text-centered">
             <p>
-                <strong>Bulma</strong> by <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is
-                licensed
-                <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The website content
+                <strong>PetShop</strong> Get food and pet-needs only <a href="/produk">here!</a> By Kelompok X. The website content
                 is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
             </p>
         </div>

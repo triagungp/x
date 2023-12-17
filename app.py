@@ -96,9 +96,6 @@ def sign_up():
 
     if existing_user:
         return redirect(url_for('signup', error_message='Email already registered'))
-
-
-
     doc = {
         "name": name,
         "email": email,
@@ -110,8 +107,6 @@ def sign_up():
     db.users.insert_one(doc)
 
     return redirect(url_for('signin'))
-
-
 
 @app.route('/signin')
 def signin():
@@ -245,22 +240,26 @@ def buy_product():
     email_pemesan = request.form['email_pemesan']
     nama_produk = request.form['nama_produk']
     alamat = request.form['alamat']
+    foto_produk= request.form['foto_produk']
     status_pemesanan = 'Pending' 
+    harga_produk= int(request.form['harga_produk'])
 
     quantity_key = f'jumlah_pesanan_{product_id}'
     jumlah_pesanan = int(request.form.get(quantity_key))
+    total_harga = harga_produk*jumlah_pesanan
 
     pesanan_data = {
         'email_pemesan': email_pemesan,
         'nama_produk': nama_produk,
         'jumlah_pesanan': jumlah_pesanan,
         'alamat': alamat,
-        'status_pemesanan': status_pemesanan
+        'status_pemesanan': status_pemesanan,
+        'foto_produk':foto_produk,
+        'total_harga':total_harga
     }
 
     db.pesanan.insert_one(pesanan_data)
-
-    return redirect(url_for('show_produk'))
+    return redirect(url_for('riwayat_pesanan'))
 
 @app.route('/cart', methods=['POST'])
 def add_to_cart():
@@ -374,9 +373,14 @@ def edit_profile():
                 {'email': user_info['email']},
                 {'$set': {'name': new_name, 'address': new_address, 'email': new_email}}
             )
-\
+
             return redirect(url_for('profile'))
         return render_template('profile.html', user_info=None)
+
+@app.route('/riwayat-pesanan')
+def riwayat_pesanan():
+    riwayat_pesanan= db.pesanan.find()
+    return render_template('riwayat-pesanan.html',riwayat_pesanan=riwayat_pesanan)
 
 
 if __name__ == '__main__':
