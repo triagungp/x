@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="//cdn.ckeditor.com/4.23.0-lts/standard/ckeditor.js"></script>
 
     <title>Product</title>
 </head>
@@ -106,7 +107,8 @@
     <nav class="navbar is-centered is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
-                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="108" style="padding: 0;">
+                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="108"
+                    style="padding: 0;">
             </a>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
@@ -219,12 +221,15 @@
                         <button type="button" class="button is-primary"
                             onclick="toggleModal('editDataModal{{ produk._id }}')"><i class="fas fa-edit"></i> </button>
                         <button type="button" class="button is-danger"
-                            onclick="toggleModal('hapusDataModal{{ produk._id }}')"><i class="fas fa-trash-alt"></i></button>
+                            onclick="toggleModal('hapusDataModal{{ produk._id }}')"><i
+                                class="fas fa-trash-alt"></i></button>
                         {% elif is_user %}
                         <button type="button" class="button is-success"
-                            onclick="toggleModal('beliDataModal{{ produk._id }}')"><i class="fas fa-shopping-bag"></i></button>
+                            onclick="toggleModal('beliDataModal{{ produk._id }}')"><i
+                                class="fas fa-shopping-bag"></i></button>
                         <button type="button" class="button is-info"
-                            onclick="toggleModal('cartDataModal{{ produk._id }}')"><i class="fas fa-cart-plus"></i></button>
+                            onclick="toggleModal('cartDataModal{{ produk._id }}')"><i
+                                class="fas fa-cart-plus"></i></button>
                         {% else %}
                         <p> </p>
                         {% endif %}
@@ -236,7 +241,7 @@
                     <div class="modal-background"></div>
                     <div class="modal-card">
                         <header class="modal-card-head">
-                            <p class="modal-card-title">{{ produk.nama_produk }} Details</p>
+                            <p class="modal-card-title">Product Details</p>
                             <button class="delete" aria-label="close"
                                 onclick="toggleModal('detailDataModal{{ produk._id }}')"></button>
                         </header>
@@ -255,7 +260,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <p class="has-text-centered">Description: {{ produk.deskripsi_produk }}</p>
+                            <pre style="white-space: pre-wrap; background-color: white;"><br>{{ produk.deskripsi_produk }}</pre>
                         </section>
                         <footer class="modal-card-foot">
                             {% if is_admin %}
@@ -411,6 +416,7 @@
                                     <div class="control">
                                         <textarea class="textarea" name="deskripsi_produk"
                                             placeholder="Enter product description" required></textarea>
+                                        <!-- <textarea name="editor1" id="editor1" rows="10" cols="80"></textarea> -->
                                     </div>
                                 </div>
 
@@ -601,7 +607,8 @@
     <footer class="footer">
         <div class="content has-text-centered">
             <p>
-                <strong>PetShop</strong> Get food and pet-needs only <a href="/produk">here!</a> By Kelompok X. The website content
+                <strong>PetShop</strong> Get food and pet-needs only <a href="/produk">here!</a> By Kelompok X. The
+                website content
                 is licensed <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY NC SA 4.0</a>.
             </p>
         </div>
@@ -669,6 +676,7 @@
                 }
             });
         }
+        CKEDITOR.replace('editor1');
     </script>
 </body>
 

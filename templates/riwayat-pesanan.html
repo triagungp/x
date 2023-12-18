@@ -211,11 +211,6 @@
                             <input type="hidden" name="cancel_item_id" value="{{ pesanan['_id'] }}">
                             <button type="button" class="button is-danger" onclick="confirmCancel()">Cancel</button>
                         </form>
-                        {% elif pesanan.status_pemesanan == 'Sedang Dikirim' %}
-                        <form id="acceptForm" action="/terima_pesanan" method="post">
-                            <input type="hidden" name="history_item_id" value="{{ pesanan['_id'] }}">
-                            <button type="button" class="button is-info" onclick="confirmAccept()">Accept</button>
-                        </form>
                         {% endif %}
 
                     </div>
