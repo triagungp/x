@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{ url_for('static', filename='js.js') }}"></script>
+    <meta property="og:title" content="Pet Shop">
+    <meta property="og:description" content="Dapatkan makanan dan kebutuhan hewan disini!">
+    <meta property="og:image" content="{{ url_for('static', filename='logo-website.png') }}">
+    <meta property="og:url" content="https://pet-shop-x.glitch.me/">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="{{ url_for('static', filename='logo-website.png') }}" type="image/png">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <title>Register</title>
     <script src="{{ url_for('static', filename='js.js') }}"></script>
