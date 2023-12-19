@@ -41,13 +41,50 @@
         top: 10%;
         left: 0%;
     }
+
+    @media screen and (max-width: 768px) {
+    .navbar-item #logo{
+        margin-left: 3vh;
+    }
+    .container {
+       /* margin-left: 10vh; */
+       margin-top: 10vh;
+       /* margin-right: 10vh; Tampilkan tombol burger */
+    }
+    .column .title{
+        margin-left: 10vh;
+    }
+
+    .column .subtitle{
+        padding-top: 2vh;
+        margin-left: 10vh;
+    }
+
+    .column .image{
+        margin-left: 10vh;
+        max-width: 50vh;
+    }
+
+    .column #button{
+        margin-left: 10vh;
+    }
+
+    .column{
+        background-position: center;
+    }
+    .mobile-image {
+        max-width: 100%; /* Atur lebar gambar pada perangkat mobile */
+    }
+    .footer{
+        margin-top: 55vh;
+    }}
 </style>
 
 <body>
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
-                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="108" style="padding: 0;" alt="Logo">
+                <img id="logo" src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="108" style="padding: 0;" alt="Logo">
             </a>
             <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
@@ -120,18 +157,18 @@
                     <h1 class="title" style="font-size: 50px; color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); margin-bottom: 0px;">
                         Welcome to Our Website
                     </h1>
-                    <img src="{{ url_for('static', filename='logo-website.png') }}">
+                    <img class="image" src="{{ url_for('static', filename='logo-website.png') }}">
                     <h2 class="subtitle" style="font-size: 30px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8) ">
                         Get food and pet-needs only here!
                     </h2>
                     {% if logged_in %}
-                    <a href="/produk" class="button buy-now is-link">Get Now</a>
+                    <a href="/produk" id="button" class="button buy-now is-link">Get Now</a>
                     {% else %}
-                    <a href="/signup" class="button buy-now is-link">Register Now</a>
+                    <a href="/signup" id="button" class="button buy-now is-link">Register Now</a>
                     {% endif %}
                 </div>
-                <div class="column is-hidden-mobile">
-                    <img src="{{ url_for('static', filename='pics.png') }}">
+                <div class="column">
+                    <img src="{{ url_for('static', filename='pics.png') }}" class="mobile-image">
                 </div>
             </div>
         </div>
