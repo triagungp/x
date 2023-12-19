@@ -10,6 +10,8 @@
     {% else %}
     <title>Riwayat Pesanan</title>
     {% endif %}
+    <script src="{{ url_for('static', filename='js.js') }}"></script>
+
 </head>
 <style>
     body {
@@ -48,18 +50,16 @@
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
-                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="28">
+                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="108" style="padding: 0;" alt="Logo">
             </a>
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-                data-target="navbarBasicExample">
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
-        <div id="navbar" class="navbar-menu">
+        <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="/">
                 <a class="navbar-item" href="/">
                     Home
                 </a>
@@ -67,8 +67,6 @@
                     Product
                 </a>
             </div>
-        </div>
-        <div id="navbar" class="navbar-menu">
             <div class="navbar-end">
                 {% if not logged_in %}
                 <div class="navbar-item">
@@ -115,9 +113,10 @@
                 </div>
                 {% endif %}
             </div>
-        </nav>
         </div>
     </nav>
+    
+    
     <!-- Judul Page -->
     <section class="body">
         {% if is_user %}

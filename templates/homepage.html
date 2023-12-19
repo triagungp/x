@@ -10,6 +10,8 @@
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Pet Shop</title>
+    <script src="{{ url_for('static', filename='js.js') }}"></script>
+
 </head>
 <style>
     body {
@@ -17,7 +19,7 @@
     }
 
     .banner {
-        background-image: url("{{ url_for('static', filename='banner.jpg') }}");
+        background-image: url("{{ url_for('static', filename='banner.png') }}");
         background-size: cover;
         background-position: center;
         height: 100%;
@@ -30,25 +32,24 @@
     }
 
     .banner .container {
-        top: 34%;
-        left: 5%;
+        top: 10%;
+        left: 0%;
     }
 </style>
 
 <body>
-    <nav class="navbar is-centered is-fixed-top" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
-                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="28">
+                <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="108" style="padding: 0;" alt="Logo">
             </a>
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-                data-target="navbarBasicExample">
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
-        <div id="navbar" class="navbar-menu">
+        <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
                 <a class="navbar-item" href="/">
                     Home
@@ -57,8 +58,6 @@
                     Product
                 </a>
             </div>
-        </div>
-        <div id="navbar" class="navbar-menu">
             <div class="navbar-end">
                 {% if not logged_in %}
                 <div class="navbar-item">
@@ -107,23 +106,27 @@
             </div>
         </div>
     </nav>
+    
     <section class="banner">
         <div class="container">
-            <div class="column" style="font-family: 'Kalam', cursive;">
-                <h1 class="title" style="font-size: 50px; color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); margin-bottom: 0px;">
-                    Welcome to Our Website
-                </h1>
-                <img src="{{ url_for('static', filename='logo-website.png') }}">
-                <h2 class="subtitle" style="font-size: 30px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8) ">
-                    Get food and pet-needs only here!
-                </h2>
-                {% if logged_in %}
-                <a href="/produk" class="button buy-now is-link">Get Now</a>
-                {% else %}
-                <a href="/signup" class="button buy-now is-link">Register Now</a>
-                {% endif %}
-            </div>
-            <div class="column">
+            <div class="columns is-vcentered">
+                <div class="column" style="font-family: 'Kalam', cursive;">
+                    <h1 class="title" style="font-size: 50px; color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); margin-bottom: 0px;">
+                        Welcome to Our Website
+                    </h1>
+                    <img src="{{ url_for('static', filename='logo-website.png') }}">
+                    <h2 class="subtitle" style="font-size: 30px; text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8) ">
+                        Get food and pet-needs only here!
+                    </h2>
+                    {% if logged_in %}
+                    <a href="/produk" class="button buy-now is-link">Get Now</a>
+                    {% else %}
+                    <a href="/signup" class="button buy-now is-link">Register Now</a>
+                    {% endif %}
+                </div>
+                <div class="column is-hidden-mobile">
+                    <img src="{{ url_for('static', filename='pics.png') }}">
+                </div>
             </div>
         </div>
     </section>

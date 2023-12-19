@@ -9,6 +9,8 @@
         integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="//cdn.ckeditor.com/4.23.0-lts/standard/ckeditor.js"></script>
+    <script src="{{ url_for('static', filename='js.js') }}"></script>
+
 
     <title>Product</title>
 </head>
@@ -22,6 +24,16 @@
         margin: 0;
     }
 
+    .product-card {
+        width: 100%;
+    }
+
+    .product-image {
+        max-width: 100%;
+        height: auto;
+    }
+
+
     .profile-image img {
         border-radius: 100%;
         width: 32px;
@@ -29,8 +41,8 @@
     }
 
     .produk-item .centered {
-        width: 200px;
-        height: 200px;
+        width: 100%;
+        height: 210px;
         overflow: hidden;
         margin: 0 auto;
     }
@@ -44,8 +56,8 @@
     }
 
     .produk-item img {
-        width: 100%;
-        height: 100%;
+        width: 70%;
+        height: 70%;
         object-fit: cover;
         object-position: center;
     }
@@ -104,20 +116,20 @@
 </style>
 
 <body>
-    <nav class="navbar is-centered is-fixed-top" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/">
                 <img src="{{ url_for('static', filename='logo-website.png') }}" width="112" height="108"
-                    style="padding: 0;">
+                    style="padding: 0;" alt="Logo">
             </a>
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
                 data-target="navbarBasicExample">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
             </a>
         </div>
-        <div id="navbar" class="navbar-menu">
+        <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
                 <a class="navbar-item" href="/">
                     Home
@@ -126,8 +138,6 @@
                     Product
                 </a>
             </div>
-        </div>
-        <div id="navbar" class="navbar-menu">
             <div class="navbar-end">
                 {% if not logged_in %}
                 <div class="navbar-item">
@@ -176,6 +186,7 @@
             </div>
         </div>
     </nav>
+
 
     <section class="section mt-4">
         <div class="container">
@@ -260,7 +271,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <pre style="white-space: pre-wrap; background-color: white;"><br>{{ produk.deskripsi_produk }}</pre>
+                            <pre
+                                style="white-space: pre-wrap; background-color: white;"><br>{{ produk.deskripsi_produk }}</pre>
                         </section>
                         <footer class="modal-card-foot">
                             {% if is_admin %}
@@ -615,69 +627,6 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        function toggleModal(modalId) {
-            var modal = document.getElementById(modalId);
-            modal.classList.toggle('is-active');
-        }
-        function incrementQuantity(productId) {
-            var quantityInput = document.getElementById('jumlah_pesanan_' + productId);
-            quantityInput.value = parseInt(quantityInput.value) + 1;
-        }
-
-        function decrementQuantity(productId) {
-            var quantityInput = document.getElementById('jumlah_pesanan_' + productId);
-            var newValue = parseInt(quantityInput.value) - 1;
-            if (newValue >= 1) {
-                quantityInput.value = newValue;
-            }
-        }
-
-        function incrementCart(productId) {
-            var quantityInput = document.getElementById('insert_cart_' + productId);
-            quantityInput.value = parseInt(quantityInput.value) + 1;
-        }
-
-        function decrementCart(productId) {
-            var quantityInput = document.getElementById('insert_cart_' + productId);
-            var newValue = parseInt(quantityInput.value) - 1;
-            if (newValue >= 1) {
-                quantityInput.value = newValue;
-            }
-        }
-
-        function filterProducts(category) {
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.style.display = 'none';
-            });
-
-            if (category === 'All') {
-                document.querySelectorAll('.product-card').forEach(card => {
-                    card.style.display = 'block';
-                });
-            } else {
-                document.querySelectorAll(`.product-card[data-category="${category}"]`).forEach(card => {
-                    card.style.display = 'block';
-                });
-            }
-        }
-
-        function searchProducts() {
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.style.display = 'none';
-            });
-
-            document.querySelectorAll('.product-card').forEach(card => {
-                const productName = card.querySelector('.subtitle').innerText.toLowerCase();
-                if (productName.includes(searchInput)) {
-                    card.style.display = 'block';
-                }
-            });
-        }
-        CKEDITOR.replace('editor1');
-    </script>
 </body>
 
 </html>
